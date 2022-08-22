@@ -17,6 +17,8 @@ function setupProxy(ws: WebSocket, upstreamConn: Deno.Conn) {
       console.log("Conn errr", err);
       ws.close(WS_STATUS_INVALID_PROXY_RESPONSE, err);
     }
+
+    ws.close(WS_STATUS_GOING_AWAY, "Upstream server closed the connection");
   };
 
   ws.onmessage = async function (event: MessageEvent) {
