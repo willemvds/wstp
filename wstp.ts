@@ -1,5 +1,5 @@
 import { parse } from "https://deno.land/std@0.152.0/flags/mod.ts";
-import { serve } from "https://deno.land/std@0.152.0/http/server.ts";
+import { serve, serveTls } from "https://deno.land/std@0.152.0/http/server.ts";
 import { iterateReader } from "https://deno.land/std@0.152.0/streams/mod.ts";
 
 const WS_STATUS_GOING_AWAY = 1001;
@@ -87,4 +87,12 @@ if (typeof (args.p) == "number") {
   port = args.p;
 }
 
-serve(reqHandler, { port: port });
+if ((typeof(args.key) == "string") && (typeof(args.cert) == "string")) {
+  serveTls(reqHandler, {
+    port: port,
+    certFile: args.cert,
+    keyFile: args.key,
+  })
+} else {
+  serve(reqHandler, { port: port });
+}
