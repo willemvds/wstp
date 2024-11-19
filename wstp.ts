@@ -16,7 +16,7 @@ function setupProxy(ws: WebSocket, upstreamConn: Deno.Conn) {
       ws.close(WS_STATUS_GOING_AWAY, "Upstream server closed the connection");
     } catch (err) {
       console.log("Conn errr", err);
-      ws.close(WS_STATUS_INVALID_PROXY_RESPONSE, err);
+      ws.close(WS_STATUS_INVALID_PROXY_RESPONSE);
     }
   };
 
@@ -76,7 +76,7 @@ async function reqHandler(req: Request) {
     return response;
   } catch (err) {
     console.log(err);
-    return new Response(err, { status: 502 });
+    return new Response("Internal Error", { status: 502 });
   }
 }
 
