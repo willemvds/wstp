@@ -1,6 +1,5 @@
-import { parse } from "https://deno.land/std@0.152.0/flags/mod.ts";
-import { serve, serveTls } from "https://deno.land/std@0.152.0/http/server.ts";
-import { iterateReader } from "https://deno.land/std@0.152.0/streams/mod.ts";
+import { parseArgs } from "@std/cli/parse-args";
+import { iterateReader } from "@std/io/iterate-reader";
 
 const WS_STATUS_GOING_AWAY = 1001;
 const WS_STATUS_INVALID_PROXY_RESPONSE = 1014;
@@ -81,18 +80,22 @@ async function reqHandler(req: Request) {
   }
 }
 
-let args = parse(Deno.args);
+let args = parseArgs(Deno.args);
 let port = 13000;
 if (typeof (args.p) == "number") {
   port = args.p;
 }
 
-if ((typeof(args.key) == "string") && (typeof(args.cert) == "string")) {
-  serveTls(reqHandler, {
+if ((typeof (args.key) == "string") && (typeof (args.cert) == "string")) {
+  Deno.serve({
+    handler: reqHandler,
     port: port,
-    certFile: args.cert,
-    keyFile: args.key,
-  })
+    cert: args.cert,
+    key: args.key,
+  });
 } else {
-  serve(reqHandler, { port: port });
+  Deno.serve({
+    handler: reqHandler,
+    port: port,
+  });
 }
